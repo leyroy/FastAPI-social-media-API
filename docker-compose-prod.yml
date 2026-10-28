@@ -1,11 +1,10 @@
-version: "3"
 services:
   api:
     image: sloppynetworks/fastapi-app
     ports:
       - 80:8000
     environment:
-      - DATABASE_HOSTNAME=${DATABASE_HOSTNAME}
+      - DATABASE_HOSTNAME=postgres
       - DATABASE_PORT=${DATABASE_PORT}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - DATABASE_NAME=${DATABASE_NAME}
@@ -15,7 +14,8 @@ services:
       - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
 
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   postgres:
     image: postgres
@@ -24,6 +24,11 @@ services:
       - POSTGRES_DB=${DATABASE_NAME}
     volumes:
       - postgres-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${DATABASE_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
   postgres-db:

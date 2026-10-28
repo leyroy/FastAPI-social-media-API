@@ -1,4 +1,4 @@
-def add(num1: int, num2: 2):
+def add(num1: int, num2: 2): # type: ignore
     return num1 + num2
 
 
@@ -17,7 +17,6 @@ def divide(num1: int, num2: int):
 
 class InsufficientFunds(Exception):
     pass
-
 
 class BankAccount():
     def __init__(self, starting_balance=0):
